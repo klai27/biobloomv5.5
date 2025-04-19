@@ -5,7 +5,6 @@ from tensorflow.keras.preprocessing import image
 import numpy as np
 import matplotlib.pyplot as plt
 import json
-import cv2
 from PIL import Image
 import os
 import subprocess
