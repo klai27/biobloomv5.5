@@ -7,14 +7,14 @@ import matplotlib.pyplot as plt
 import json
 from PIL import Image
 import os
-import subprocess
+import gdown
 
 # === Step 1: Download Model from Google Drive if not exists ===
 model_path = "mobilenetv2_finetuned_2025-04-17.h5"
 if not os.path.exists(model_path):
     file_id = "1nqZLHbc0fMtl1bBXWx-84XHjzXDnipOE"
-    subprocess.run(["pip", "install", "gdown"])
-    subprocess.run(["gdown", f"https://drive.google.com/uc?id={file_id}", "-O", model_path])
+    url = f"https://drive.google.com/uc?id={file_id}"
+    gdown.download(url, model_path, quiet=False)
 
 # === Step 2: Load Class Indices ===
 with open("class_indices.json", "r") as f:
