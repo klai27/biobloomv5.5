@@ -14,7 +14,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# === Custom CSS ===
+# === Custom CSS for Background and Instruction Box ===
 st.markdown(
     """
     <style>
@@ -22,12 +22,13 @@ st.markdown(
         background-color: #C8D4BB;
     }
     .custom-info {
-        background-color: #ef87ba;
+        background-color: #ffffff;
         padding: 10px;
         border-radius: 5px;
-        color: white;
+        color: #333;
         font-weight: 500;
         font-size: 16px;
+        border-left: 6px solid #4E6252;
     }
     </style>
     """,
@@ -41,7 +42,7 @@ if not os.path.exists(model_path):
     url = f"https://drive.google.com/uc?id={file_id}"
     gdown.download(url, model_path, quiet=False, fuzzy=True, use_cookies=True)
 
-# === Class Labels (Don't change them, just format nicely for display) ===
+# === Class Labels ===
 class_names = [
     "Tomato___Bacterial_spot",
     "Tomato___Early_blight",
@@ -66,14 +67,14 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# === Custom Instruction Color ===
+# === White Instruction Box ===
 st.markdown(
     "<div class='custom-info'>Please upload a <b>clear photo of a single tomato leaf</b> for the best results.</div>",
     unsafe_allow_html=True
 )
 
-# === File Upload ===
-uploaded_file = st.file_uploader("Upload a tomato leaf image", type=["jpg", "jpeg", "png"])
+# === File Upload (accept any type) ===
+uploaded_file = st.file_uploader("Upload a tomato leaf image", type=None)
 
 # === Load Model ===
 try:
@@ -84,45 +85,46 @@ except Exception as e:
 
 # === Image Prediction ===
 if uploaded_file:
-    img = Image.open(uploaded_file).convert("RGB")
-    img_resized = img.resize((224, 224))
-    img_array = image.img_to_array(img_resized) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
+    try:
+        img = Image.open(uploaded_file).convert("RGB")
+        img_resized = img.resize((224, 224))
+        img_array = image.img_to_array(img_resized) / 255.0
+        img_array = np.expand_dims(img_array, axis=0)
 
-    st.image(img, caption="Uploaded Image", use_container_width=True)
+        st.image(img, caption="Uploaded Image", use_container_width=True)
 
-    with st.spinner('Analyzing...'):
-        predictions = model.predict(img_array)
-        predicted_index = np.argmax(predictions[0])
-        predicted_class = class_names[predicted_index]
-        confidence = predictions[0][predicted_index]
+        with st.spinner('Analyzing...'):
+            predictions = model.predict(img_array)
+            predicted_index = np.argmax(predictions[0])
+            predicted_class = class_names[predicted_index]
+            confidence = predictions[0][predicted_index]
 
-    st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
-    st.markdown(f"Confidence: **{confidence*100:.2f}%**")
+        st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
+        st.markdown(f"Confidence: **{confidence*100:.2f}%**")
 
-    # === Confidence Chart ===
-    if st.button("Show Prediction Confidence"):
-        st.subheader("Top 3 Prediction Confidence")
-        top_indices = np.argsort(predictions[0])[::-1][:3]
-        top_classes = [class_names[i] for i in top_indices]
-        top_scores = [predictions[0][i] * 100 for i in top_indices]
+        # === Confidence Chart ===
+        if st.button("Show Prediction Confidence"):
+            st.subheader("Top 3 Prediction Confidence")
+            top_indices = np.argsort(predictions[0])[::-1][:3]
+            top_classes = [class_names[i] for i in top_indices]
+            top_scores = [predictions[0][i] * 100 for i in top_indices]
 
-        # All pink bars
-        pink = '#ef87ba'
-        fig, ax = plt.subplots()
-        ax.barh(
-            [clean_label(cls) for cls in top_classes[::-1]],
-            top_scores[::-1],
-            color=pink
-        )
-        ax.set_xlim(0, 100)
-        ax.set_xlabel("Confidence (%)")
-        st.pyplot(fig)
+            fig, ax = plt.subplots()
+            ax.barh(
+                [clean_label(cls) for cls in top_classes[::-1]],
+                top_scores[::-1],
+                color='#ef87ba'
+            )
+            ax.set_xlim(0, 100)
+            ax.set_xlabel("Confidence (%)")
+            st.pyplot(fig)
 
-    if st.button("Try Another Image"):
-        st.experimental_rerun()
+        if st.button("Try Another Image"):
+            st.experimental_rerun()
+    except Exception as err:
+        st.error("The uploaded file could not be processed as an image. Please upload a valid image file.")
 
-# === Quick Info Popup About the Model ===
+# === Quick Info Box ===
 st.info("This AI model uses MobileNetV2 to detect 10 tomato plant diseases from leaf images.")
 
 # === Full Model Description ===
