@@ -54,6 +54,14 @@ st.markdown(
         font-size: 18px;
         margin-top: 0;
     }
+
+    .welcome-text {
+        text-align: center;
+        font-size: 20px;
+        color: #4E6252;
+        margin-top: -10px;
+        margin-bottom: 30px;
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -80,13 +88,23 @@ class_names = [
     "Tomato___healthy"
 ]
 
-# === Helper Function to Clean Class Names ===
+# === Helper Function ===
 def clean_label(label):
     return label.replace("___", " – ").replace("_", " ")
 
-# === App Title ===
+# === Title and Welcome ===
 st.markdown("<h1 class='big-title'>BioBloom</h1>", unsafe_allow_html=True)
 st.markdown("<p class='subtitle'>Smart Tomato Leaf Disease Detection</p>", unsafe_allow_html=True)
+st.markdown("<p class='welcome-text'>Nurturing healthier harvests through intelligent plant care 🌱</p>", unsafe_allow_html=True)
+
+# === How It Works Section ===
+with st.expander("How does BioBloom work?"):
+    st.markdown("""
+    1. Upload a clear photo of a single tomato leaf.  
+    2. Our AI scans it for signs of common diseases.  
+    3. View your prediction result and confidence level.  
+    4. Use this to take better care of your crop!
+    """)
 
 # === Instruction Box ===
 st.markdown(
@@ -94,7 +112,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# === File Uploader (accept any file) ===
+# === File Upload ===
 uploaded_file = st.file_uploader(" ", type=None)
 
 # === Load Model ===
@@ -123,7 +141,6 @@ if uploaded_file:
         st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
         st.markdown(f"Confidence: **{confidence*100:.2f}%**")
 
-        # === Confidence Chart ===
         if st.button("Show Prediction Confidence"):
             st.subheader("Top 3 Prediction Confidence")
             top_indices = np.argsort(predictions[0])[::-1][:3]
