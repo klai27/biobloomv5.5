@@ -118,7 +118,8 @@ if uploaded_file:
             ax.set_xlim(0, 100)
             ax.set_xlabel("Confidence (%)")
             st.pyplot(fig)
-
+    except Exception as err:
+        st.error("The uploaded file could not be processed as an image. Please upload a valid image file.")
     
 
 # === Full Model Description ===
