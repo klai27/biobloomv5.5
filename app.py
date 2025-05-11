@@ -74,7 +74,7 @@ st.markdown(
 )
 
 # === File Upload (accept any type) ===
-uploaded_file = st.file_uploader("Please upload a <b>clear photo of a single tomato leaf</b> for the best results.", type=None)
+uploaded_file = st.file_uploader(" ", type=None)
 
 # === Load Model ===
 try:
