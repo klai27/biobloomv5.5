@@ -74,7 +74,7 @@ st.markdown(
 )
 
 # === File Upload (accept any type) ===
-uploaded_file = st.file_uploader("Upload a tomato leaf image", type=None)
+uploaded_file = st.file_uploader(type=None)
 
 # === Load Model ===
 try:
@@ -119,13 +119,7 @@ if uploaded_file:
             ax.set_xlabel("Confidence (%)")
             st.pyplot(fig)
 
-        if st.button("Try Another Image"):
-            st.experimental_rerun()
-    except Exception as err:
-        st.error("The uploaded file could not be processed as an image. Please upload a valid image file.")
-
-# === Quick Info Box ===
-st.info("This AI model uses MobileNetV2 to detect 10 tomato plant diseases from leaf images.")
+    
 
 # === Full Model Description ===
 with st.expander("About this model"):
