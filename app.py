@@ -101,8 +101,8 @@ st.markdown("<p class='welcome-text'>Nurturing healthier harvests through intell
 with st.expander("How does BioBloom work?"):
     st.markdown("""
     1. Upload a clear photo of a single tomato leaf.  
-    2. Our AI scans it for signs of common diseases.  
-    3. View your prediction result and confidence level.  
+    2. Our Machine Learning model scans it for signs of common diseases.  
+    3. View your prediction result, treatment advice and confidence level.  
     4. Use this to take better care of your crop!
     """)
 
