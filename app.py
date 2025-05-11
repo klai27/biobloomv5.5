@@ -14,13 +14,20 @@ st.set_page_config(
     layout="centered"
 )
 
-# === Custom CSS for Background and Instruction Box ===
+# === Custom CSS for Quicksand Font, Background, Title, and Instruction Box ===
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Quicksand', sans-serif;
+    }
+
     .stApp {
         background-color: #C8D4BB;
     }
+
     .custom-info {
         background-color: #ffffff;
         padding: 10px;
@@ -29,6 +36,19 @@ st.markdown(
         font-weight: 500;
         font-size: 16px;
         border-left: 6px solid #4E6252;
+    }
+
+    .big-title {
+        font-size: 48px !important;
+        color: #4E6252;
+        text-align: center;
+        margin-bottom: 0;
+    }
+
+    .subtitle {
+        text-align: center;
+        font-size: 18px;
+        margin-top: 0;
     }
     </style>
     """,
@@ -61,11 +81,8 @@ def clean_label(label):
     return label.replace("___", " – ").replace("_", " ")
 
 # === App Title ===
-st.markdown(
-    "<h1 style='text-align: center; color: #4E6252;'>BioBloom</h1>"
-    "<p style='text-align: center; font-size: 18px;'>Smart Tomato Leaf Disease Detection</p>",
-    unsafe_allow_html=True
-)
+st.markdown("<h1 class='big-title'>BioBloom</h1>", unsafe_allow_html=True)
+st.markdown("<p class='subtitle'>Smart Tomato Leaf Disease Detection</p>", unsafe_allow_html=True)
 
 # === White Instruction Box ===
 st.markdown(
@@ -120,7 +137,6 @@ if uploaded_file:
             st.pyplot(fig)
     except Exception as err:
         st.error("The uploaded file could not be processed as an image. Please upload a valid image file.")
-    
 
 # === Full Model Description ===
 with st.expander("About this model"):
