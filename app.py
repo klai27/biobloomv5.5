@@ -14,14 +14,14 @@ st.set_page_config(
     layout="centered"
 )
 
-# === Custom CSS for Quicksand Font, Background, Title, and Instruction Box ===
+# === Custom CSS ===
 st.markdown(
     """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
 
     html, body, [class*="css"] {
-        font-family: 'Quicksand', sans-serif;
+        font-family: 'Quicksand', sans-serif !important;
     }
 
     .stApp {
@@ -36,6 +36,10 @@ st.markdown(
         font-weight: 500;
         font-size: 16px;
         border-left: 6px solid #4E6252;
+    }
+
+    h1, h2, h3, h4, h5, h6, p, label, div, span, button {
+        font-family: 'Quicksand', sans-serif !important;
     }
 
     .big-title {
@@ -55,7 +59,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# === Download Model ===
+# === Model Download ===
 model_path = "biobloomv6point5.h5"
 if not os.path.exists(model_path):
     file_id = "1fxutw8dp7IJuUWcSi4JRR05vmjW77faJ"
@@ -76,7 +80,7 @@ class_names = [
     "Tomato___healthy"
 ]
 
-# === Helper Function to Clean Display Names ===
+# === Helper Function to Clean Class Names ===
 def clean_label(label):
     return label.replace("___", " – ").replace("_", " ")
 
@@ -84,13 +88,13 @@ def clean_label(label):
 st.markdown("<h1 class='big-title'>BioBloom</h1>", unsafe_allow_html=True)
 st.markdown("<p class='subtitle'>Smart Tomato Leaf Disease Detection</p>", unsafe_allow_html=True)
 
-# === White Instruction Box ===
+# === Instruction Box ===
 st.markdown(
     "<div class='custom-info'>Please upload a <b>clear photo of a single tomato leaf</b> for the best results.</div>",
     unsafe_allow_html=True
 )
 
-# === File Upload (accept any type) ===
+# === File Uploader (accept any file) ===
 uploaded_file = st.file_uploader(" ", type=None)
 
 # === Load Model ===
@@ -100,7 +104,7 @@ except Exception as e:
     st.error(f"Error loading model: {e}")
     st.stop()
 
-# === Image Prediction ===
+# === Prediction Logic ===
 if uploaded_file:
     try:
         img = Image.open(uploaded_file).convert("RGB")
@@ -135,10 +139,11 @@ if uploaded_file:
             ax.set_xlim(0, 100)
             ax.set_xlabel("Confidence (%)")
             st.pyplot(fig)
-    except Exception as err:
+
+    except Exception:
         st.error("The uploaded file could not be processed as an image. Please upload a valid image file.")
 
-# === Full Model Description ===
+# === Model Info ===
 with st.expander("About this model"):
     st.markdown(
         "This model is a fine-tuned version of **MobileNetV2**, trained on 10,000+ tomato leaf images "
