@@ -66,7 +66,7 @@ st.markdown(
 st.info("Please upload a **clear photo of a single tomato leaf** for the best results.")
 
 # === Upload Image ===
-uploaded_file = st.file_uploader("Upload a tomato leaf image", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Upload a tomato leaf image", type=None)
 
 # === Load Model ===
 try:
