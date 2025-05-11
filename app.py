@@ -43,7 +43,7 @@ st.markdown(
     }
 
     .big-title {
-        font-size: 48px !important;
+        font-size: 60px !important;
         color: #4E6252;
         text-align: center;
         margin-bottom: 0;
@@ -51,13 +51,13 @@ st.markdown(
 
     .subtitle {
         text-align: center;
-        font-size: 18px;
+        font-size: 22px;
         margin-top: 0;
     }
 
     .welcome-text {
         text-align: center;
-        font-size: 20px;
+        font-size: 30px;
         color: #4E6252;
         margin-top: -10px;
         margin-bottom: 30px;
