@@ -141,6 +141,72 @@ if uploaded_file:
         st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
         st.markdown(f"Confidence: **{confidence*100:.2f}%**")
 
+        # === Treatment Tips ===
+        with st.expander("Treatment Advice"):
+            if predicted_class == "Tomato___Early_blight":
+                st.markdown("""
+                - Remove infected leaves to reduce spread.  
+                - Apply a copper-based fungicide weekly.  
+                - Ensure proper spacing and avoid overhead watering.
+                """)
+            elif predicted_class == "Tomato___Late_blight":
+                st.markdown("""
+                - Remove and destroy infected plants immediately.  
+                - Use fungicides containing chlorothalonil.  
+                - Avoid planting tomatoes near potatoes.
+                """)
+            elif predicted_class == "Tomato___Leaf_Mold":
+                st.markdown("""
+                - Improve air circulation in the growing area.  
+                - Apply sulfur-based fungicide or potassium bicarbonate.  
+                - Remove lower leaves if humidity is high.
+                """)
+            elif predicted_class == "Tomato___Bacterial_spot":
+                st.markdown("""
+                - Remove infected plant parts.  
+                - Avoid working with plants when they’re wet.  
+                - Use copper sprays and disease-resistant seeds.
+                """)
+            elif predicted_class == "Tomato___Septoria_leaf_spot":
+                st.markdown("""
+                - Remove heavily infected leaves.  
+                - Use fungicides like mancozeb or chlorothalonil.  
+                - Rotate crops annually.
+                """)
+            elif predicted_class == "Tomato___Spider_mites Two-spotted_spider_mite":
+                st.markdown("""
+                - Spray with neem oil or insecticidal soap.  
+                - Keep humidity up — spider mites hate it.  
+                - Introduce beneficial insects like ladybugs.
+                """)
+            elif predicted_class == "Tomato___Target_Spot":
+                st.markdown("""
+                - Prune affected areas.  
+                - Use copper-based fungicides.  
+                - Rotate crops and clean up debris after harvest.
+                """)
+            elif predicted_class == "Tomato___Tomato_Yellow_Leaf_Curl_Virus":
+                st.markdown("""
+                - Remove infected plants.  
+                - Use insect netting to control whiteflies.  
+                - Grow resistant tomato varieties.
+                """)
+            elif predicted_class == "Tomato___Tomato_mosaic_virus":
+                st.markdown("""
+                - Discard infected plants completely.  
+                - Disinfect tools and hands after handling.  
+                - Use certified virus-free seeds.
+                """)
+            elif predicted_class == "Tomato___healthy":
+                st.markdown("""
+                - Great job! Your plant looks healthy.  
+                - Keep monitoring regularly.  
+                - Water at the base and mulch to prevent splash-up.
+                """)
+            else:
+                st.markdown("No treatment information available.")
+
+        # === Confidence Chart ===
         if st.button("Show Prediction Confidence"):
             st.subheader("Top 3 Prediction Confidence")
             top_indices = np.argsort(predictions[0])[::-1][:3]
@@ -172,7 +238,8 @@ st.markdown(
     """
     <hr style="margin-top: 50px;">
     <p style="text-align: center; font-size: 16px;">
-        Developed by <strong>Aysha Sultan AlNuaimi</strong> and <strong>Klaithem Ahmed AlMannaei</strong>
+        Developed by <strong>Aysha Sultan AlNuaimi</strong> and <strong>Klaithem Ahmed AlMannaei</strong><br>
+        Supervised by <strong>Dr. Mohammed Khairi Ishak</strong>
     </p>
     """,
     unsafe_allow_html=True
