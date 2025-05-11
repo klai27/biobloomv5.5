@@ -14,7 +14,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# === Custom CSS ===
+# === Custom CSS for Background ===
 st.markdown(
     """
     <style>
@@ -26,14 +26,22 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# === Step 1: Download Model if Not Exists ===
-model_path = "Biobloomv6.h5"
+# === Download Model from Google Drive ===
+model_path = "biobloomv6point5.h5"
 if not os.path.exists(model_path):
-    file_id = "1fu7wYHU77nJ1aNz61ue47Ku0oO3AKQL1"  # Replace if needed
+    file_id = "1fxutw8dp7IJuUWcSi4JRR05vmjW77faJ"
     url = f"https://drive.google.com/uc?id={file_id}"
     gdown.download(url, model_path, quiet=False, fuzzy=True, use_cookies=True)
 
-# === Step 2: Define Class Names ===
+# === Verify Download ===
+if os.path.exists(model_path):
+    st.success(f"Model `{model_path}` downloaded successfully.")
+    st.write("File size:", os.path.getsize(model_path), "bytes")
+else:
+    st.error("Model file not found. Please check the download link.")
+    st.stop()
+
+# === Class Names ===
 class_names = [
     "Tomato___Bacterial_spot",
     "Tomato___Early_blight",
@@ -57,18 +65,17 @@ st.markdown(
 # === Instructions ===
 st.info("Please upload a **clear photo of a single tomato leaf** for the best results.")
 
-# === File Upload ===
+# === Upload Image ===
 uploaded_file = st.file_uploader("Upload a tomato leaf image", type=["jpg", "jpeg", "png"])
 
 # === Load Model ===
-if os.path.exists(model_path):
+try:
     model = load_model(model_path)
-    st.success("Model loaded and ready.")
-else:
-    st.error("Model file not found. Please upload the model.")
+except Exception as e:
+    st.error(f"Error loading model: {e}")
     st.stop()
 
-# === Image Prediction ===
+# === Prediction ===
 if uploaded_file:
     img = Image.open(uploaded_file).convert("RGB")
     img_resized = img.resize((224, 224))
@@ -86,7 +93,7 @@ if uploaded_file:
     st.markdown(f"### Prediction: **{predicted_class}**")
     st.markdown(f"Confidence: **{confidence*100:.2f}%**")
 
-    # === Confidence Bar Chart ===
+    # === Confidence Chart ===
     if st.button("Show Prediction Confidence"):
         st.subheader("Top 3 Prediction Confidence")
         top_indices = np.argsort(predictions[0])[::-1][:3]
@@ -102,15 +109,15 @@ if uploaded_file:
         ax.set_xlabel("Confidence (%)")
         st.pyplot(fig)
 
-    # === Try Another Image ===
+    # === Rerun ===
     if st.button("Try Another Image"):
         st.experimental_rerun()
 
-# === Info About the Model ===
+# === Model Info ===
 with st.expander("About this model"):
     st.markdown(
         "This model is a fine-tuned version of **MobileNetV2**, trained on 10,000+ tomato leaf images "
-        "covering 10 common tomato plant diseases. It was further fine-tuned on April 17, 2025 for better accuracy and generalization."
+        "covering 10 common tomato plant diseases. It was further fine-tuned on April 17, 2025 for improved accuracy."
     )
 
 # === Footer ===
