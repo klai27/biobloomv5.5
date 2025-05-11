@@ -9,11 +9,12 @@ import os
 import gdown
 
 # === Step 1: Download Model from Google Drive if not exists ===
+
 model_path = "Biobloomv6.h5"
 if not os.path.exists(model_path):
-    file_id = "1ufihXrgUCC43uIrpZX5wFH4xGwAnxgOB"
+    file_id = "1fu7wYHU77nJ1aNz61ue47Ku0oO3AKQL1"
     url = f"https://drive.google.com/uc?id={file_id}"
-    gdown.download(url, model_path, quiet=False)
+    gdown.download(url, model_path, quiet=False, fuzzy=True, use_cookies=True)
 
 # === Step 2: Define Class Indices Directly ===
 class_names = [
