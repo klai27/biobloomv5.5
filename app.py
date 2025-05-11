@@ -14,34 +14,34 @@ st.set_page_config(
     layout="centered"
 )
 
-# === Custom CSS for Background ===
+# === Custom CSS ===
 st.markdown(
     """
     <style>
     .stApp {
         background-color: #C8D4BB;
     }
+    .custom-info {
+        background-color: #ef87ba;
+        padding: 10px;
+        border-radius: 5px;
+        color: white;
+        font-weight: 500;
+        font-size: 16px;
+    }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# === Download Model from Google Drive ===
+# === Download Model ===
 model_path = "biobloomv6point5.h5"
 if not os.path.exists(model_path):
     file_id = "1fxutw8dp7IJuUWcSi4JRR05vmjW77faJ"
     url = f"https://drive.google.com/uc?id={file_id}"
     gdown.download(url, model_path, quiet=False, fuzzy=True, use_cookies=True)
 
-# === Verify Download ===
-if os.path.exists(model_path):
-    st.success(f"Model `{model_path}` downloaded successfully.")
-    st.write("File size:", os.path.getsize(model_path), "bytes")
-else:
-    st.error("Model file not found. Please check the download link.")
-    st.stop()
-
-# === Class Names ===
+# === Class Labels (Don't change them, just format nicely for display) ===
 class_names = [
     "Tomato___Bacterial_spot",
     "Tomato___Early_blight",
@@ -55,6 +55,10 @@ class_names = [
     "Tomato___healthy"
 ]
 
+# === Helper Function to Clean Display Names ===
+def clean_label(label):
+    return label.replace("___", " – ").replace("_", " ")
+
 # === App Title ===
 st.markdown(
     "<h1 style='text-align: center; color: #4E6252;'>BioBloom</h1>"
@@ -62,11 +66,14 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# === Instructions ===
-st.info("Please upload a **clear photo of a single tomato leaf** for the best results.")
+# === Custom Instruction Color ===
+st.markdown(
+    "<div class='custom-info'>Please upload a <b>clear photo of a single tomato leaf</b> for the best results.</div>",
+    unsafe_allow_html=True
+)
 
-# === Upload Image ===
-uploaded_file = st.file_uploader("Upload a tomato leaf image", type=None)
+# === File Upload ===
+uploaded_file = st.file_uploader("Upload a tomato leaf image", type=["jpg", "jpeg", "png"])
 
 # === Load Model ===
 try:
@@ -75,7 +82,7 @@ except Exception as e:
     st.error(f"Error loading model: {e}")
     st.stop()
 
-# === Prediction ===
+# === Image Prediction ===
 if uploaded_file:
     img = Image.open(uploaded_file).convert("RGB")
     img_resized = img.resize((224, 224))
@@ -90,7 +97,7 @@ if uploaded_file:
         predicted_class = class_names[predicted_index]
         confidence = predictions[0][predicted_index]
 
-    st.markdown(f"### Prediction: **{predicted_class}**")
+    st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
     st.markdown(f"Confidence: **{confidence*100:.2f}%**")
 
     # === Confidence Chart ===
@@ -100,24 +107,29 @@ if uploaded_file:
         top_classes = [class_names[i] for i in top_indices]
         top_scores = [predictions[0][i] * 100 for i in top_indices]
 
-        # Matching green palette
-        colors = ['#4E6252', '#6B8E4E', '#A3B18A']
-
+        # All pink bars
+        pink = '#ef87ba'
         fig, ax = plt.subplots()
-        bars = ax.barh(top_classes[::-1], top_scores[::-1], color=colors[:len(top_classes)])
+        ax.barh(
+            [clean_label(cls) for cls in top_classes[::-1]],
+            top_scores[::-1],
+            color=pink
+        )
         ax.set_xlim(0, 100)
         ax.set_xlabel("Confidence (%)")
         st.pyplot(fig)
 
-    # === Rerun ===
     if st.button("Try Another Image"):
         st.experimental_rerun()
 
-# === Model Info ===
+# === Quick Info Popup About the Model ===
+st.info("This AI model uses MobileNetV2 to detect 10 tomato plant diseases from leaf images.")
+
+# === Full Model Description ===
 with st.expander("About this model"):
     st.markdown(
         "This model is a fine-tuned version of **MobileNetV2**, trained on 10,000+ tomato leaf images "
-        "covering 10 common tomato plant diseases. It was further fine-tuned on April 17, 2025 for improved accuracy."
+        "covering 10 common tomato plant diseases. It was further fine-tuned on April 17, 2025 for improved accuracy and generalization."
     )
 
 # === Footer ===
