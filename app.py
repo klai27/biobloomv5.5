@@ -147,15 +147,38 @@ if uploaded_file:
             top_classes = [class_names[i] for i in top_indices]
             top_scores = [predictions[0][i] * 100 for i in top_indices]
 
-            fig, ax = plt.subplots()
-            ax.barh(
-                [clean_label(cls) for cls in top_classes[::-1]],
-                top_scores[::-1],
-                color='#ef87ba'
-            )
-            ax.set_xlim(0, 100)
-            ax.set_xlabel("Confidence (%)")
-            st.pyplot(fig)
+            fig, ax = plt.subplots(figsize=(6, 4))
+bars = ax.bar(
+    [clean_label(cls) for cls in top_classes],
+    top_scores,
+    color='#ef87ba',
+    edgecolor='white',
+    width=0.5
+)
+
+# Add percentage labels above each bar
+for bar in bars:
+    height = bar.get_height()
+    ax.text(
+        bar.get_x() + bar.get_width() / 2,
+        height + 2,
+        f"{height:.1f}%",
+        ha='center',
+        fontsize=10
+    )
+
+# Clean look
+ax.set_ylim(0, 100)
+ax.set_ylabel("")
+ax.set_xlabel("")
+ax.spines['right'].set_visible(False)
+ax.spines['top'].set_visible(False)
+ax.spines['left'].set_visible(False)
+ax.spines['bottom'].set_visible(False)
+ax.tick_params(left=False, bottom=False)
+ax.grid(False)
+
+st.pyplot(fig)
 
     except Exception:
         st.error("The uploaded file could not be processed as an image. Please upload a valid image file.")
