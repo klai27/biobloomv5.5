@@ -1,4 +1,3 @@
-
 import streamlit as st
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
@@ -8,15 +7,33 @@ from PIL import Image
 import os
 import gdown
 
-# === Step 1: Download Model from Google Drive if not exists ===
+# === Page Settings ===
+st.set_page_config(
+    page_title="BioBloom 🌿",
+    page_icon="🌿",
+    layout="centered"
+)
 
+# === Custom CSS ===
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #C8D4BB;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# === Step 1: Download Model if Not Exists ===
 model_path = "Biobloomv6.h5"
 if not os.path.exists(model_path):
-    file_id = "1fu7wYHU77nJ1aNz61ue47Ku0oO3AKQL1"
+    file_id = "1fu7wYHU77nJ1aNz61ue47Ku0oO3AKQL1"  # Replace if needed
     url = f"https://drive.google.com/uc?id={file_id}"
     gdown.download(url, model_path, quiet=False, fuzzy=True, use_cookies=True)
 
-# === Step 2: Define Class Indices Directly ===
+# === Step 2: Define Class Names ===
 class_names = [
     "Tomato___Bacterial_spot",
     "Tomato___Early_blight",
@@ -76,8 +93,11 @@ if uploaded_file:
         top_classes = [class_names[i] for i in top_indices]
         top_scores = [predictions[0][i] * 100 for i in top_indices]
 
+        # Matching green palette
+        colors = ['#4E6252', '#6B8E4E', '#A3B18A']
+
         fig, ax = plt.subplots()
-        ax.barh(top_classes[::-1], top_scores[::-1], color='green')
+        bars = ax.barh(top_classes[::-1], top_scores[::-1], color=colors[:len(top_classes)])
         ax.set_xlim(0, 100)
         ax.set_xlabel("Confidence (%)")
         st.pyplot(fig)
@@ -92,3 +112,14 @@ with st.expander("About this model"):
         "This model is a fine-tuned version of **MobileNetV2**, trained on 10,000+ tomato leaf images "
         "covering 10 common tomato plant diseases. It was further fine-tuned on April 17, 2025 for better accuracy and generalization."
     )
+
+# === Footer ===
+st.markdown(
+    """
+    <hr style="margin-top: 50px;">
+    <p style="text-align: center; font-size: 16px;">
+        Developed by <strong>Aysha Sultan AlNuaimi</strong> and <strong>Klaithem Ahmed AlMannaei</strong>
+    </p>
+    """,
+    unsafe_allow_html=True
+)
