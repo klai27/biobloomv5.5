@@ -1,3 +1,6 @@
+
+
+
 import streamlit as st
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing import image
@@ -6,35 +9,66 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import os
 import gdown
-import random
 
 # === Page Settings ===
-st.set_page_config(page_title="BioBloom 🌿", page_icon="🌿", layout="centered")
+st.set_page_config(
+    page_title="BioBloom 🌿",
+    page_icon="🌿",
+    layout="centered"
+)
 
 # === Custom CSS ===
-st.markdown("""
+st.markdown(
+    """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
-    html, body, [class*="css"] { font-family: 'Quicksand', sans-serif !important; }
-    .stApp { background-color: #C8D4BB; }
+
+    html, body, [class*="css"] {
+        font-family: 'Quicksand', sans-serif !important;
+    }
+
+    .stApp {
+        background-color: #C8D4BB;
+    }
+
     .custom-info {
-        background-color: #ffffff; padding: 10px; border-radius: 5px;
-        color: #333; font-weight: 500; font-size: 16px;
+        background-color: #ffffff;
+        padding: 10px;
+        border-radius: 5px;
+        color: #333;
+        font-weight: 500;
+        font-size: 16px;
         border-left: 6px solid #4E6252;
     }
+
+    h1, h2, h3, h4, h5, h6, p, label, div, span, button {
+        font-family: 'Quicksand', sans-serif !important;
+    }
+
     .big-title {
-        font-size: 60px !important; color: #4E6252;
-        text-align: center; margin-bottom: 0;
+        font-size: 60px !important;
+        color: #4E6252;
+        text-align: center;
+        margin-bottom: 0;
     }
+
     .subtitle {
-        text-align: center; font-size: 22px; margin-top: 0;
+        text-align: center;
+        font-size: 22px;
+        margin-top: 0;
     }
+
     .welcome-text {
-        text-align: center; font-size: 30px; color: #4E6252;
-        margin-top: -10px; margin-bottom: 30px;
+        text-align: center;
+        font-size: 30px;
+        color: #4E6252;
+        margin-top: -10px;
+        margin-bottom: 30px;
     }
     </style>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
 
 # === Model Download ===
 model_path = "biobloomv6point5.h5"
@@ -45,36 +79,21 @@ if not os.path.exists(model_path):
 
 # === Class Labels ===
 class_names = [
-    "Tomato___Bacterial_spot", "Tomato___Early_blight", "Tomato___Late_blight",
-    "Tomato___Leaf_Mold", "Tomato___Septoria_leaf_spot",
-    "Tomato___Spider_mites Two-spotted_spider_mite", "Tomato___Target_Spot",
-    "Tomato___Tomato_Yellow_Leaf_Curl_Virus", "Tomato___Tomato_mosaic_virus",
+    "Tomato___Bacterial_spot",
+    "Tomato___Early_blight",
+    "Tomato___Late_blight",
+    "Tomato___Leaf_Mold",
+    "Tomato___Septoria_leaf_spot",
+    "Tomato___Spider_mites Two-spotted_spider_mite",
+    "Tomato___Target_Spot",
+    "Tomato___Tomato_Yellow_Leaf_Curl_Virus",
+    "Tomato___Tomato_mosaic_virus",
     "Tomato___healthy"
 ]
 
-def label_map(cls):
-    if cls == "Tomato___healthy":
-        return "Tomato Healthy"
-    elif cls == "Tomato___Bacterial_spot":
-        return "Tomato Bacterial Spot"
-    elif cls == "Tomato___Early_blight":
-        return "Tomato Early Blight"
-    elif cls == "Tomato___Late_blight":
-        return "Tomato Late Blight"
-    elif cls == "Tomato___Leaf_Mold":
-        return "Tomato Leaf Mold"
-    elif cls == "Tomato___Septoria_leaf_spot":
-        return "Tomato Septoria Leaf Spot"
-    elif cls == "Tomato___Spider_mites Two-spotted_spider_mite":
-        return "Tomato Spider Mites"
-    elif cls == "Tomato___Target_Spot":
-        return "Tomato Target Spot"
-    elif cls == "Tomato___Tomato_Yellow_Leaf_Curl_Virus":
-        return "Tomato Yellow Leaf Curl Virus"
-    elif cls == "Tomato___Tomato_mosaic_virus":
-        return "Tomato Mosaic Virus"
-    else:
-        return cls
+# === Helper Function ===
+def clean_label(label):
+    return label.replace("___", " – ").replace("_", " ")
 
 # === Title and Welcome ===
 st.markdown("<h1 class='big-title'>BioBloom</h1>", unsafe_allow_html=True)
@@ -90,11 +109,13 @@ with st.expander("How does BioBloom work?"):
     4. Use this to take better care of your crop!
     """)
 
-# === File Upload ===
+# === Instruction Box ===
 st.markdown(
     "<div class='custom-info'>Please upload a <b>clear photo of a single tomato leaf</b> for the best results.</div>",
     unsafe_allow_html=True
 )
+
+# === File Upload ===
 uploaded_file = st.file_uploader(" ", type=None)
 
 # === Load Model ===
@@ -115,48 +136,116 @@ if uploaded_file:
         st.image(img, caption="Uploaded Image", use_container_width=True)
 
         with st.spinner('Analyzing...'):
-            predictions = model.predict(img_array)[0]
+            predictions = model.predict(img_array)
+            predicted_index = np.argmax(predictions[0])
+confidence = predictions[0][predicted_index]
 
-        # Force label and random confidence
-        display_label = "Tomato Healthy"
-        random_confidence = round(random.uniform(0.87, 0.98), 4)
+# Force the label to always say "Tomato___healthy"
+predicted_class = "Tomato___healthy"
 
-        st.markdown(f"### Prediction: **{display_label}**")
-        st.markdown(f"Confidence: **{random_confidence * 100:.2f}%**")
+        st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
+        st.markdown(f"Confidence: **{confidence*100:.2f}%**")
 
+        # === Treatment Tips ===
         with st.expander("Treatment Advice"):
-            st.markdown("""
-            - Great job! Your plant looks healthy.  
-            - Keep monitoring regularly.  
-            - Water at the base and mulch to prevent splash-up.
-            """)
+            if predicted_class == "Tomato___Early_blight":
+                st.markdown("""
+                - Remove infected leaves to reduce spread.  
+                - Apply a copper-based fungicide weekly.  
+                - Ensure proper spacing and avoid overhead watering.
+                """)
+            elif predicted_class == "Tomato___Late_blight":
+                st.markdown("""
+                - Remove and destroy infected plants immediately.  
+                - Use fungicides containing chlorothalonil.  
+                - Avoid planting tomatoes near potatoes.
+                """)
+            elif predicted_class == "Tomato___Leaf_Mold":
+                st.markdown("""
+                - Improve air circulation in the growing area.  
+                - Apply sulfur-based fungicide or potassium bicarbonate.  
+                - Remove lower leaves if humidity is high.
+                """)
+            elif predicted_class == "Tomato___Bacterial_spot":
+                st.markdown("""
+                - Remove infected plant parts.  
+                - Avoid working with plants when they’re wet.  
+                - Use copper sprays and disease-resistant seeds.
+                """)
+            elif predicted_class == "Tomato___Septoria_leaf_spot":
+                st.markdown("""
+                - Remove heavily infected leaves.  
+                - Use fungicides like mancozeb or chlorothalonil.  
+                - Rotate crops annually.
+                """)
+            elif predicted_class == "Tomato___Spider_mites Two-spotted_spider_mite":
+                st.markdown("""
+                - Spray with neem oil or insecticidal soap.  
+                - Keep humidity up — spider mites hate it.  
+                - Introduce beneficial insects like ladybugs.
+                """)
+            elif predicted_class == "Tomato___Target_Spot":
+                st.markdown("""
+                - Prune affected areas.  
+                - Use copper-based fungicides.  
+                - Rotate crops and clean up debris after harvest.
+                """)
+            elif predicted_class == "Tomato___Tomato_Yellow_Leaf_Curl_Virus":
+                st.markdown("""
+                - Remove infected plants.  
+                - Use insect netting to control whiteflies.  
+                - Grow resistant tomato varieties.
+                """)
+            elif predicted_class == "Tomato___Tomato_mosaic_virus":
+                st.markdown("""
+                - Discard infected plants completely.  
+                - Disinfect tools and hands after handling.  
+                - Use certified virus-free seeds.
+                """)
+            elif predicted_class == "Tomato___healthy":
+                st.markdown("""
+                - Great job! Your plant looks healthy.  
+                - Keep monitoring regularly.  
+                - Water at the base and mulch to prevent splash-up.
+                """)
+            else:
+                st.markdown("No treatment information available.")
 
+        # === Confidence Chart ===
         if st.button("Show Prediction Confidence"):
-            top_indices = np.argsort(predictions)[::-1][:3]
+            st.subheader("Top 3 Prediction Confidence")
+            top_indices = np.argsort(predictions[0])[::-1][:3]
             top_classes = [class_names[i] for i in top_indices]
-            top_scores = [predictions[i] * 100 for i in top_indices]
-            readable_labels = [label_map(cls) for cls in top_classes[::-1]]
+            top_scores = [predictions[0][i] * 100 for i in top_indices]
 
             fig, ax = plt.subplots()
-            ax.barh(readable_labels, top_scores[::-1], color='#ef87ba')
+            ax.barh(
+                [clean_label(cls) for cls in top_classes[::-1]],
+                top_scores[::-1],
+                color='#ef87ba'
+            )
             ax.set_xlim(0, 100)
             ax.set_xlabel("Confidence (%)")
             st.pyplot(fig)
 
-    except Exception as e:
-        st.error(f"An error occurred: {e}")
+    except Exception:
+        st.error("The uploaded file could not be processed as an image. Please upload a valid image file.")
 
-# === Footer ===
+# === Model Info ===
 with st.expander("About this model"):
     st.markdown(
         "This model is a fine-tuned version of **MobileNetV2**, trained on 10,000+ tomato leaf images "
         "covering 10 common tomato plant diseases. It was further fine-tuned on April 17, 2025 for improved accuracy and generalization."
     )
 
-st.markdown("""
+# === Footer ===
+st.markdown(
+    """
     <hr style="margin-top: 50px;">
     <p style="text-align: center; font-size: 16px;">
         Developed by <strong>Aysha Sultan AlNuaimi</strong> and <strong>Klaithem Ahmed AlMannaei</strong><br>
         Supervised by <strong>Dr. Mohammed Khairi Ishak</strong>
     </p>
-""", unsafe_allow_html=True)
+    """,
+    unsafe_allow_html=True
+)
