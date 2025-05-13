@@ -230,10 +230,8 @@ if uploaded_file:
 with st.expander("About this model"):
     st.markdown(
         """
-        This project presents a Convolutional Neural Network (CNN) model built from scratch for classifying tomato leaf images into multiple disease categories.  
-        The model consists of several convolutional, batch normalization, and pooling layers to extract features effectively, followed by dense layers for classification.  
-        Trained using TensorFlow and Keras on preprocessed image data, the model was optimized using the Adam optimizer and monitored with validation accuracy to ensure robust performance.  
-        The final model and class labels were exported for easy deployment in real-world agricultural diagnostics.
+        This project presents a Convolutional Neural Network (CNN) model built from scratch for classifying tomato leaf images into multiple disease categories. The model consists of several convolutional, batch normalization, and pooling layers to extract features effectively, followed by dense layers for classification.  
+        Trained using TensorFlow and Keras on preprocessed image data, the model was optimized using the Adam optimizer and monitored with validation accuracy to ensure robust performance. The final model and class labels were exported for easy deployment in real-world agricultural diagnostics.
         """
     )
 
