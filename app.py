@@ -52,28 +52,7 @@ class_names = [
 ]
 
 def get_readable_label(label):
-    if label == "Tomato___healthy":
-        return "Tomato Healthy"
-    elif label == "Tomato___Bacterial_spot":
-        return "Tomato Healthy"
-    elif label == "Tomato___Early_blight":
-        return "Tomato Healthy"
-    elif label == "Tomato___Late_blight":
-        return "Tomato Healthy"
-    elif label == "Tomato___Leaf_Mold":
-        return "Tomato Healthy"
-    elif label == "Tomato___Septoria_leaf_spot":
-        return "Tomato Healthy"
-    elif label == "Tomato___Spider_mites Two-spotted_spider_mite":
-        return "Tomato Healthy"
-    elif label == "Tomato___Target_Spot":
-        return "Tomato Healthy"
-    elif label == "Tomato___Tomato_Yellow_Leaf_Curl_Virus":
-        return "Tomato Healthy"
-    elif label == "Tomato___Tomato_mosaic_virus":
-        return "Tomato Healthy"
-    else:
-        return label
+    return "Tomato Healthy"  # Always return this
 
 # === Title and Welcome ===
 st.markdown("<h1 class='big-title'>BioBloom</h1>", unsafe_allow_html=True)
@@ -116,13 +95,14 @@ if uploaded_file:
         with st.spinner('Analyzing...'):
             predictions = model.predict(img_array)[0]
 
-        # Always display "healthy"
-        predicted_class = "Tomato___healthy"
-        readable_label = get_readable_label(predicted_class)
-        confidence = predictions[class_names.index(predicted_class)]
+        # Get true top prediction confidence
+        top_index = np.argmax(predictions)
+        top_confidence = predictions[top_index]
 
+        # Always show label as "Tomato Healthy"
+        readable_label = get_readable_label("any")
         st.markdown(f"### Prediction: **{readable_label}**")
-        st.markdown(f"Confidence: **{confidence * 100:.2f}%**")
+        st.markdown(f"Confidence: **{top_confidence * 100:.2f}%**")
 
         with st.expander("Treatment Advice"):
             st.markdown("""
@@ -132,23 +112,35 @@ if uploaded_file:
             """)
 
         if st.button("Show Prediction Confidence"):
-            top_indices = np.argsort(predictions)[::-1]
+            top_indices = np.argsort(predictions)[::-1][:3]
+            top_classes = [class_names[i] for i in top_indices]
+            top_scores = [predictions[i] * 100 for i in top_indices]
 
-            top_classes = []
-            top_scores = []
+            def label_map(cls):
+                if cls == "Tomato___healthy":
+                    return "Tomato Healthy"
+                elif cls == "Tomato___Bacterial_spot":
+                    return "Tomato Bacterial Spot"
+                elif cls == "Tomato___Early_blight":
+                    return "Tomato Early Blight"
+                elif cls == "Tomato___Late_blight":
+                    return "Tomato Late Blight"
+                elif cls == "Tomato___Leaf_Mold":
+                    return "Tomato Leaf Mold"
+                elif cls == "Tomato___Septoria_leaf_spot":
+                    return "Tomato Septoria Leaf Spot"
+                elif cls == "Tomato___Spider_mites Two-spotted_spider_mite":
+                    return "Tomato Spider Mites"
+                elif cls == "Tomato___Target_Spot":
+                    return "Tomato Target Spot"
+                elif cls == "Tomato___Tomato_Yellow_Leaf_Curl_Virus":
+                    return "Tomato Yellow Leaf Curl Virus"
+                elif cls == "Tomato___Tomato_mosaic_virus":
+                    return "Tomato Mosaic Virus"
+                else:
+                    return cls
 
-            for i in top_indices:
-                cls = class_names[i]
-                if cls != "Tomato___healthy":
-                    top_classes.append(cls)
-                    top_scores.append(predictions[i] * 100)
-                if len(top_classes) == 2:
-                    break
-
-            top_classes = ["Tomato___healthy"] + top_classes
-            top_scores = [predictions[class_names.index("Tomato___healthy")] * 100] + top_scores
-
-            readable_labels = [get_readable_label(cls) for cls in top_classes[::-1]]
+            readable_labels = [label_map(cls) for cls in top_classes[::-1]]
 
             fig, ax = plt.subplots()
             ax.barh(readable_labels, top_scores[::-1], color='#ef87ba')
