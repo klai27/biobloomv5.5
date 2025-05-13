@@ -138,10 +138,8 @@ if uploaded_file:
         with st.spinner('Analyzing...'):
             predictions = model.predict(img_array)
             predicted_index = np.argmax(predictions[0])
-confidence = predictions[0][predicted_index]
-
-# Force the label to always say "Tomato___healthy"
-predicted_class = "Tomato___healthy"
+            predicted_class = class_names[predicted_index]
+            confidence = predictions[0][predicted_index]
 
         st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
         st.markdown(f"Confidence: **{confidence*100:.2f}%**")
