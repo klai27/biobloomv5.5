@@ -138,8 +138,21 @@ if uploaded_file:
             predicted_class = class_names[predicted_index]
             confidence = predictions[0][predicted_index]
 
-        st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
-        st.markdown(f"Confidence: **{confidence*100:.2f}%**")
+        # === Hilarious Display Mode ===
+        st.markdown("### 🧠 AI Verdict: **Tomato Healthy 🍅💪**")
+        st.markdown(f"**Confidence Level:** `{confidence*100:.2f}%` confident... probably... maybe.")
+        st.info("Definitely not lying. Trust me, I'm an AI. 🤖✨")
+
+        # Optional Drama Reveal
+        with st.expander("Reveal the Brutal Truth 😨"):
+            st.markdown(f"**Actual Prediction:** `{clean_label(predicted_class)}`")
+            st.markdown(f"**Model Confidence:** `{confidence*100:.2f}%`")
+
+        # Just for personal entertainment
+        if predicted_class != "Tomato___healthy":
+            st.warning("Shhh... Let’s just pretend it’s fine. 🍃")
+        else:
+            st.success("Yup. Even the model's impressed. This tomato slays.")
 
         # === Treatment Tips ===
         with st.expander("Treatment Advice"):
@@ -230,8 +243,10 @@ if uploaded_file:
 with st.expander("About this model"):
     st.markdown(
         """
-        This project presents a Convolutional Neural Network (CNN) model built from scratch for classifying tomato leaf images into multiple disease categories. The model consists of several convolutional, batch normalization, and pooling layers to extract features effectively, followed by dense layers for classification.  
-        Trained using TensorFlow and Keras on preprocessed image data, the model was optimized using the Adam optimizer and monitored with validation accuracy to ensure robust performance. The final model and class labels were exported for easy deployment in real-world agricultural diagnostics.
+        This project presents a Convolutional Neural Network (CNN) model built from scratch for classifying tomato leaf images into multiple disease categories.  
+        The model consists of several convolutional, batch normalization, and pooling layers to extract features effectively, followed by dense layers for classification.  
+        Trained using TensorFlow and Keras on preprocessed image data, the model was optimized using the Adam optimizer and monitored with validation accuracy to ensure robust performance.  
+        The final model and class labels were exported for easy deployment in real-world agricultural diagnostics.
         """
     )
 
@@ -246,5 +261,3 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-
-
