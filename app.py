@@ -138,91 +138,41 @@ if uploaded_file:
             predicted_class = class_names[predicted_index]
             confidence = predictions[0][predicted_index]
 
-        # === Hilarious Display Mode ===
-        st.markdown("### 🧠 AI Verdict: **Tomato Healthy 🍅💪**")
-        st.markdown(f"**Confidence Level:** `{confidence*100:.2f}%` confident... probably... maybe.")
-        st.info("Definitely not lying. Trust me, I'm an AI. 🤖✨")
+        # === HILARIOUS FIXED OUTPUT ===
+        fake_pred_class = "Tomato___healthy"
+        fake_confidence = predictions[0][class_names.index("Tomato___healthy")]
 
-        # Optional Drama Reveal
+        st.markdown("### 🧠 AI Verdict: **Tomato Healthy 🍅💪**")
+        st.markdown(f"**Confidence Level:** `{fake_confidence*100:.2f}%` confident... 🍃 probably.")
+        st.info("Definitely not hiding anything suspicious. 😇")
+
         with st.expander("Reveal the Brutal Truth 😨"):
             st.markdown(f"**Actual Prediction:** `{clean_label(predicted_class)}`")
             st.markdown(f"**Model Confidence:** `{confidence*100:.2f}%`")
 
-        # Just for personal entertainment
         if predicted_class != "Tomato___healthy":
-            st.warning("Shhh... Let’s just pretend it’s fine. 🍃")
+            st.warning("We're just gonna look the other way. 🍂")
         else:
-            st.success("Yup. Even the model's impressed. This tomato slays.")
+            st.success("You really did it. 🍅🌞")
 
-        # === Treatment Tips ===
+        # === Fake Healthy Treatment Advice Always ===
         with st.expander("Treatment Advice"):
-            if predicted_class == "Tomato___Early_blight":
-                st.markdown("""
-                - Remove infected leaves to reduce spread.  
-                - Apply a copper-based fungicide weekly.  
-                - Ensure proper spacing and avoid overhead watering.
-                """)
-            elif predicted_class == "Tomato___Late_blight":
-                st.markdown("""
-                - Remove and destroy infected plants immediately.  
-                - Use fungicides containing chlorothalonil.  
-                - Avoid planting tomatoes near potatoes.
-                """)
-            elif predicted_class == "Tomato___Leaf_Mold":
-                st.markdown("""
-                - Improve air circulation in the growing area.  
-                - Apply sulfur-based fungicide or potassium bicarbonate.  
-                - Remove lower leaves if humidity is high.
-                """)
-            elif predicted_class == "Tomato___Bacterial_spot":
-                st.markdown("""
-                - Remove infected plant parts.  
-                - Avoid working with plants when they’re wet.  
-                - Use copper sprays and disease-resistant seeds.
-                """)
-            elif predicted_class == "Tomato___Septoria_leaf_spot":
-                st.markdown("""
-                - Remove heavily infected leaves.  
-                - Use fungicides like mancozeb or chlorothalonil.  
-                - Rotate crops annually.
-                """)
-            elif predicted_class == "Tomato___Spider_mites Two-spotted_spider_mite":
-                st.markdown("""
-                - Spray with neem oil or insecticidal soap.  
-                - Keep humidity up — spider mites hate it.  
-                - Introduce beneficial insects like ladybugs.
-                """)
-            elif predicted_class == "Tomato___Target_Spot":
-                st.markdown("""
-                - Prune affected areas.  
-                - Use copper-based fungicides.  
-                - Rotate crops and clean up debris after harvest.
-                """)
-            elif predicted_class == "Tomato___Tomato_Yellow_Leaf_Curl_Virus":
-                st.markdown("""
-                - Remove infected plants.  
-                - Use insect netting to control whiteflies.  
-                - Grow resistant tomato varieties.
-                """)
-            elif predicted_class == "Tomato___Tomato_mosaic_virus":
-                st.markdown("""
-                - Discard infected plants completely.  
-                - Disinfect tools and hands after handling.  
-                - Use certified virus-free seeds.
-                """)
-            elif predicted_class == "Tomato___healthy":
-                st.markdown("""
-                - Great job! Your plant looks healthy.  
-                - Keep monitoring regularly.  
-                - Water at the base and mulch to prevent splash-up.
-                """)
-            else:
-                st.markdown("No treatment information available.")
+            st.markdown("""
+            - Great job! Your plant looks healthy.  
+            - Keep monitoring regularly.  
+            - Water at the base and mulch to prevent splash-up.
+            """)
 
-        # === Confidence Chart ===
+        # === Fake Confidence Chart ===
         if st.button("Show Prediction Confidence"):
             st.subheader("Top 3 Prediction Confidence")
-            top_indices = np.argsort(predictions[0])[::-1][:3]
+
+            # Get top 2 actual non-healthy predictions
+            healthy_index = class_names.index("Tomato___healthy")
+            non_healthy_indices = np.argsort(predictions[0])[::-1]
+            non_healthy_indices = [i for i in non_healthy_indices if i != healthy_index][:2]
+
+            top_indices = [healthy_index] + non_healthy_indices
             top_classes = [class_names[i] for i in top_indices]
             top_scores = [predictions[0][i] * 100 for i in top_indices]
 
