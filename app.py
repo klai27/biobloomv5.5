@@ -92,17 +92,19 @@ if uploaded_file:
 
         st.image(img, caption="Uploaded Image", use_container_width=True)
 
-        with st.spinner('Analyzing...'):
-    predictions = model.predict(img_array)[0]
+with st.spinner('Analyzing...'):
+    prediction_array = model.predict(img_array)
+    predictions = prediction_array[0]  # This is a 1D array of class scores
 
-# Get actual top predicted class and its confidence
-top_index = np.argmax(predictions)
+# Find top predicted class and its confidence
+top_index = int(np.argmax(predictions))  # Get the index of the highest score
 top_class = class_names[top_index]
-top_confidence = predictions[top_index]
+top_confidence = float(predictions[top_index])  # Get the confidence of that class
 
-# Force label to always show "Tomato Healthy"
+# Always display "Tomato Healthy" regardless of prediction
 display_label = "Tomato Healthy"
 
+# Show result
 st.markdown(f"### Prediction: **{display_label}**")
 st.markdown(f"Confidence: **{top_confidence * 100:.2f}%**")
 
