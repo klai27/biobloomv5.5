@@ -55,23 +55,23 @@ def get_readable_label(label):
     if label == "Tomato___healthy":
         return "Tomato Healthy"
     elif label == "Tomato___Bacterial_spot":
-        return "Tomato Bacterial Spot"
+        return "Tomato Healthy"
     elif label == "Tomato___Early_blight":
-        return "Tomato Early Blight"
+        return "Tomato Healthy"
     elif label == "Tomato___Late_blight":
-        return "Tomato Late Blight"
+        return "Tomato Healthy"
     elif label == "Tomato___Leaf_Mold":
-        return "Tomato Leaf Mold"
+        return "Tomato Healthy"
     elif label == "Tomato___Septoria_leaf_spot":
-        return "Tomato Septoria Leaf Spot"
+        return "Tomato Healthy"
     elif label == "Tomato___Spider_mites Two-spotted_spider_mite":
-        return "Tomato Spider Mites"
+        return "Tomato Healthy"
     elif label == "Tomato___Target_Spot":
-        return "Tomato Target Spot"
+        return "Tomato Healthy"
     elif label == "Tomato___Tomato_Yellow_Leaf_Curl_Virus":
-        return "Tomato Yellow Leaf Curl Virus"
+        return "Tomato Healthy"
     elif label == "Tomato___Tomato_mosaic_virus":
-        return "Tomato Mosaic Virus"
+        return "Tomato Healthy"
     else:
         return label
 
