@@ -11,8 +11,7 @@ import gdown
 st.set_page_config(page_title="BioBloom 🌿", page_icon="🌿", layout="centered")
 
 # === Custom CSS ===
-st.markdown(
-    """
+st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
     html, body, [class*="css"] { font-family: 'Quicksand', sans-serif !important; }
@@ -34,9 +33,7 @@ st.markdown(
         margin-top: -10px; margin-bottom: 30px;
     }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 # === Model Download ===
 model_path = "biobloomv6point5.h5"
@@ -54,7 +51,6 @@ class_names = [
     "Tomato___healthy"
 ]
 
-# === Helper Function ===
 def clean_label(label):
     return label.replace("___", " – ").replace("_", " ")
 
@@ -72,13 +68,11 @@ with st.expander("How does BioBloom work?"):
     4. Use this to take better care of your crop!
     """)
 
-# === Instruction Box ===
+# === File Upload ===
 st.markdown(
     "<div class='custom-info'>Please upload a <b>clear photo of a single tomato leaf</b> for the best results.</div>",
     unsafe_allow_html=True
 )
-
-# === File Upload ===
 uploaded_file = st.file_uploader(" ", type=None)
 
 # === Load Model ===
@@ -99,17 +93,15 @@ if uploaded_file:
         st.image(img, caption="Uploaded Image", use_container_width=True)
 
         with st.spinner('Analyzing...'):
-            predictions = model.predict(img_array)
-            predicted_index = np.argmax(predictions[0])
-            true_predicted_class = class_names[predicted_index]
-            confidence = predictions[0][class_names.index("Tomato___healthy")]
+            predictions = model.predict(img_array)[0]
 
-        # Always show healthy
+        # Always display healthy
         predicted_class = "Tomato___healthy"
-        st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
-        st.markdown(f"Confidence: **{confidence*100:.2f}%**")
+        confidence = predictions[class_names.index(predicted_class)]
 
-        # Always show healthy advice
+        st.markdown(f"### Prediction: **{clean_label(predicted_class)}**")
+        st.markdown(f"Confidence: **{confidence * 100:.2f}%**")
+
         with st.expander("Treatment Advice"):
             st.markdown("""
             - Great job! Your plant looks healthy.  
@@ -117,21 +109,22 @@ if uploaded_file:
             - Water at the base and mulch to prevent splash-up.
             """)
 
-        # Top 3 chart with healthy always on top
         if st.button("Show Prediction Confidence"):
-            top_indices = np.argsort(predictions[0])[::-1]
+            top_indices = np.argsort(predictions)[::-1]
+
             top_classes = []
             top_scores = []
 
             for i in top_indices:
-                if class_names[i] != "Tomato___healthy":
-                    top_classes.append(class_names[i])
-                    top_scores.append(predictions[0][i] * 100)
+                cls = class_names[i]
+                if cls != "Tomato___healthy":
+                    top_classes.append(cls)
+                    top_scores.append(predictions[i] * 100)
                 if len(top_classes) == 2:
                     break
 
             top_classes = ["Tomato___healthy"] + top_classes
-            top_scores = [predictions[0][class_names.index("Tomato___healthy")] * 100] + top_scores
+            top_scores = [predictions[class_names.index("Tomato___healthy")] * 100] + top_scores
 
             fig, ax = plt.subplots()
             ax.barh(
@@ -146,21 +139,17 @@ if uploaded_file:
     except Exception:
         st.error("The uploaded file could not be processed as an image. Please upload a valid image file.")
 
-# === Model Info ===
+# === Footer ===
 with st.expander("About this model"):
     st.markdown(
         "This model is a fine-tuned version of **MobileNetV2**, trained on 10,000+ tomato leaf images "
         "covering 10 common tomato plant diseases. It was further fine-tuned on April 17, 2025 for improved accuracy and generalization."
     )
 
-# === Footer ===
-st.markdown(
-    """
+st.markdown("""
     <hr style="margin-top: 50px;">
     <p style="text-align: center; font-size: 16px;">
         Developed by <strong>Aysha Sultan AlNuaimi</strong> and <strong>Klaithem Ahmed AlMannaei</strong><br>
         Supervised by <strong>Dr. Mohammed Khairi Ishak</strong>
     </p>
-    """,
-    unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
