@@ -93,16 +93,18 @@ if uploaded_file:
         st.image(img, caption="Uploaded Image", use_container_width=True)
 
         with st.spinner('Analyzing...'):
-            predictions = model.predict(img_array)[0]
+    predictions = model.predict(img_array)[0]
 
-        # Get true top prediction confidence
-        top_index = np.argmax(predictions)
-        top_confidence = predictions[top_index]
+# Get actual top predicted class and its confidence
+top_index = np.argmax(predictions)
+top_class = class_names[top_index]
+top_confidence = predictions[top_index]
 
-        # Always show label as "Tomato Healthy"
-        readable_label = get_readable_label("any")
-        st.markdown(f"### Prediction: **{readable_label}**")
-        st.markdown(f"Confidence: **{top_confidence * 100:.2f}%**")
+# Force label to always show "Tomato Healthy"
+display_label = "Tomato Healthy"
+
+st.markdown(f"### Prediction: **{display_label}**")
+st.markdown(f"Confidence: **{top_confidence * 100:.2f}%**")
 
         with st.expander("Treatment Advice"):
             st.markdown("""
